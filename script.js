@@ -4,7 +4,7 @@
 // sets up contents of the gameboard array to webpage
 const gameBoard = (block) => {
     
-    let moveCount=0;
+    let content = ['','','','','','','','','']
 
     const render = () => {
         const blocks = document.querySelectorAll('.block');
@@ -17,11 +17,9 @@ const gameBoard = (block) => {
         
     }
 
-    const getSign = (block) => {
 
-    }
 
-    const getCount = () => moveCount
+    const getCount = () => content.filter(item => item.length>0 )
 
 
     return {render, getCount}
@@ -48,19 +46,48 @@ const Player = (sign) => {
 
 // logic to control gameboard. main function
 const gameboardController = (() => {
+    let _startingPlayer;
+    let _nextPlayer;
 
     const playerX = Player('X')
     const playerO = Player('O')
-    let _startingPlayer;
-    let _nextPlayer;
-    let _moveCount=0; 
+    let newGame;
+
+
+    
+
 
     const pickPlayerStart = () => {
         t =  Math.floor((Math.random() * 2) + 1);
         console.log("picking....", t)
-        return (t==1)? playerX : playerO
+        if (t==1){
+            _startingPlayer = playerX;
+            _nextPlayer = playerO;
+            return _startingPlayer}
+        else{
+            _startingPlayer = playerO
+            _nextPlayer = playerX;
+            return _startingPlayer
+        }
     
     }
+
+    const selectNextPlayer = () => {
+        console.log(newGame)
+        if (newGame.getCount()==0) {
+            console.log(_startingPlayer)
+            return _startingPlayer
+        } else if (newGame.getCount()%2==0) {
+            console.log('player', _startingPlayer)
+            return _startingPlayer
+        } else {
+            console.log('player', _nextPlayer)
+            return _nextPlayer
+            
+        }
+    }
+
+    const getGame = () => newGame;
 
     const playerXMove = (block) => {
         console.log('setting mark...', 'X')
@@ -79,8 +106,15 @@ const gameboardController = (() => {
         console.log('Starting round....')
         _startingPlayer = pickPlayerStart()
         newGame = gameBoard(); 
+        console.log(newGame)
        
-        (_startingPlayer === playerX)? playerXMove(block) : playerOMove(block)
+        if (_startingPlayer === playerX){
+            playerXMove(block)
+            _nextPlayer=playerO;
+        } else {
+            playerOMove(block)
+            _nextPlayer=playerX;
+        }
     }
 
 
@@ -91,7 +125,7 @@ const gameboardController = (() => {
     }
 
 
-    return { startRound}
+    return { startRound, getGame, selectNextPlayer, playerOMove, playerXMove }
 })()
 
 
@@ -100,17 +134,26 @@ const gameboardController = (() => {
 const interfaceController = (() => {
     const blocks = document.querySelectorAll('.block')
     const gameBoard = document.querySelector('game-board')
-    
+ 
 
     // starts here, not set to a variable because it will be immediately invoked 
     
     blocks.forEach(item => {
         item.addEventListener('click', function(e){
         const key = document.querySelector(`#${e.target.id}`)
-        // instantiate new game here
-        if (!gameBoard) gameboardController.startRound(e) 
+        console.log(gameboardController.getGame())
+        if (typeof gameboardController.getGame() === 'undefined') gameboardController.startRound(e) 
         else {
             // find out whose turn it is and make them move
+            if (e.target.innerText==='') {
+                player = gameboardController.selectNextPlayer()
+                console.log(player.getSign())
+                if (player.getSign()==='X'){ 
+                    gameboardController.playerXMove(e) }
+                else gameboardController.playerOMove(e)
+            } else {
+                console.log("Can't play this tile")
+            }
         }
 
 
