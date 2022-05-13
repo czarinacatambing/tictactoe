@@ -21,7 +21,11 @@ const gameBoard = (block) => {
 
 
     const updateContent = (item, i) => content[i] = item;
-    const getCount = () => content.filter(item => item.length>0 )
+    const getCount = () => {
+        x = content.filter(item => item.length>0 )
+        console.log("count -->", x)
+        return x.length
+    }
     const getContent = () => content
 
     return {render, getCount, updateContent, getContent}
@@ -75,7 +79,7 @@ const gameboardController = (() => {
     }
 
     const selectNextPlayer = () => {
-        console.log(newGame)
+        console.log('COUNT-->', newGame.getCount())
         if (newGame.getCount()==0) {
             console.log(_startingPlayer)
             return _startingPlayer
@@ -116,10 +120,8 @@ const gameboardController = (() => {
        
         if (_startingPlayer === playerX){
             playerXMove(block)
-            _nextPlayer=playerO;
         } else {
             playerOMove(block)
-            _nextPlayer=playerX;
         }
 
         return newGame
@@ -152,6 +154,7 @@ const interfaceController = (() => {
         console.log(gameboardController.getGame())
         if (typeof gameboardController.getGame() === 'undefined') {
             game = gameboardController.startRound(e) 
+            updateGameboard()
         } else {
             // find out whose turn it is and make them move
             if (e.target.innerText==='') {
