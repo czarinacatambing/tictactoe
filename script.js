@@ -19,10 +19,12 @@ const gameBoard = (block) => {
 
 
 
+
+    const updateContent = (item, i) => content[i] = item;
     const getCount = () => content.filter(item => item.length>0 )
+    const getContent = () => content
 
-
-    return {render, getCount}
+    return {render, getCount, updateContent, getContent}
 
 
 
@@ -87,16 +89,20 @@ const gameboardController = (() => {
         }
     }
 
+
+
     const getGame = () => newGame;
 
     const playerXMove = (block) => {
         console.log('setting mark...', 'X')
         block.target.innerHTML = 'X'
+
         // console.log(block)
     }
     const playerOMove = (block) => {
         console.log('setting mark...', 'O')
         block.target.innerText = 'O'
+
         // console.log(block)
     }
 
@@ -115,6 +121,8 @@ const gameboardController = (() => {
             playerOMove(block)
             _nextPlayer=playerX;
         }
+
+        return newGame
     }
 
 
@@ -133,7 +141,7 @@ const gameboardController = (() => {
 // logic to manage interface
 const interfaceController = (() => {
     const blocks = document.querySelectorAll('.block')
-    const gameBoard = document.querySelector('game-board')
+    let game;
  
 
     // starts here, not set to a variable because it will be immediately invoked 
@@ -142,8 +150,9 @@ const interfaceController = (() => {
         item.addEventListener('click', function(e){
         const key = document.querySelector(`#${e.target.id}`)
         console.log(gameboardController.getGame())
-        if (typeof gameboardController.getGame() === 'undefined') gameboardController.startRound(e) 
-        else {
+        if (typeof gameboardController.getGame() === 'undefined') {
+            game = gameboardController.startRound(e) 
+        } else {
             // find out whose turn it is and make them move
             if (e.target.innerText==='') {
                 player = gameboardController.selectNextPlayer()
@@ -151,6 +160,7 @@ const interfaceController = (() => {
                 if (player.getSign()==='X'){ 
                     gameboardController.playerXMove(e) }
                 else gameboardController.playerOMove(e)
+                updateGameboard()
             } else {
                 console.log("Can't play this tile")
             }
@@ -159,6 +169,14 @@ const interfaceController = (() => {
 
         })
     })
+
+    // update contents of gameboard after every playermove 
+    const updateGameboard = () => {
+        blocks.forEach( (item, i) => {
+            game.updateContent(item.innerText, i) 
+        })
+
+    }
 
 
 
