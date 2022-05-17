@@ -113,11 +113,11 @@ const gameboardController = (() => {
             if (winner) {
                 break
             }
-            if(item==='X' && prevItem===item) {
+            if(item==='X' && ( x.length===0 || prevItem===item) ) {
                 x.push(item)
                 prevItem = item
                 winner = (checkPattern(x)) ? 'x': null;
-            } else if (item==='O' && prevItem===item) {
+            } else if (item==='O' &&  ( o.length===0 || prevItem===item)) {
                 o.push(item)
                 prevItem = item
                 winner = (checkPattern(o)) ? 'o': null;
