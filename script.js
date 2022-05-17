@@ -78,8 +78,63 @@ const gameboardController = (() => {
     
     }
 
+    const findWinner = () => {
+        return checkVerticalWin()
+    }
+
+    const checkDiagonalWin = () => {
+      // if specific blocks are prefilled with same characters
+        
+    }
+
+    const checkHorizontalWin = () => {
+        // if 3 blocks that are 3 blocks apart are continuously the same character
+
+    }
+
+    const checkPattern = (arr) => {
+        if(arr.length===3 && arr.map(x => x===arr[0])) return true
+        else false
+    }
+
+    const checkVerticalWin = () => {
+        
+        items = newGame.getContent()
+        // if 3 blocks are continuously the same character
+        let x = []
+        let o = []
+        let prevItem;
+        let winner;
+
+        
+        for( let i =0; i<items.length; i++) {
+            item = items[i]
+            if (i===0) prevItem = item;
+            if (winner) {
+                break
+            }
+            if(item==='X' && prevItem===item) {
+                x.push(item)
+                prevItem = item
+                winner = (checkPattern(x)) ? 'x': null;
+            } else if (item==='O' && prevItem===item) {
+                o.push(item)
+                prevItem = item
+                winner = (checkPattern(o)) ? 'o': null;
+            }
+            else {
+                // reset the count if pattern is broken
+                x = []
+                o = []
+            }
+        }
+
+        return (winner)? winner : null
+    }
+
+
     const selectNextPlayer = () => {
-        console.log('COUNT-->', newGame.getCount())
+    
         if (newGame.getCount()==0) {
             console.log(_startingPlayer)
             return _startingPlayer
@@ -135,7 +190,7 @@ const gameboardController = (() => {
     }
 
 
-    return { startRound, getGame, selectNextPlayer, playerOMove, playerXMove }
+    return { startRound, getGame, selectNextPlayer, playerOMove, playerXMove, findWinner }
 })()
 
 
@@ -144,6 +199,7 @@ const gameboardController = (() => {
 const interfaceController = (() => {
     const blocks = document.querySelectorAll('.block')
     let game;
+    let winner;
  
 
     // starts here, not set to a variable because it will be immediately invoked 
@@ -164,10 +220,17 @@ const interfaceController = (() => {
                     gameboardController.playerXMove(e) }
                 else gameboardController.playerOMove(e)
                 updateGameboard()
+                winner = gameboardController.findWinner()
             } else {
                 console.log("Can't play this tile")
             }
         }
+
+    if(winner) console.log('WINNING --> ', winner)
+    const blockPlay = () => { 
+    
+        
+    }
 
 
         })
@@ -176,7 +239,11 @@ const interfaceController = (() => {
     // update contents of gameboard after every playermove 
     const updateGameboard = () => {
         blocks.forEach( (item, i) => {
-            game.updateContent(item.innerText, i) 
+            if (item.innerText!=='')  {
+                console.log('ITEM:',item)
+                console.log('I:',i)
+                game.updateContent(item.innerText, i) }
+                
         })
 
     }
