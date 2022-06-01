@@ -79,7 +79,7 @@ const gameboardController = (() => {
     }
 
     const findWinner = () => {
-        return checkVerticalWin()
+        return checkHorizontalWin()
     }
 
     const checkDiagonalWin = () => {
@@ -89,7 +89,39 @@ const gameboardController = (() => {
 
     const checkHorizontalWin = () => {
         // if 3 blocks that are 3 blocks apart are continuously the same character
+        
+        items = newGame.getContent()
+        // if 3 blocks are continuously the same character
+        let x = []
+        let o = []
+        let prevItem;
+        let winner;
 
+        
+        for( let i =0; i<items.length; i++) {
+            item = items[i]
+            prevItem = (i-3 < 0)? null : items[i-3] // 
+            if (i===0) prevItem = item;
+            if (winner) {
+                break
+            }
+            if(item==='X' && ( x.length===0 || prevItem===item) ) {
+                x.push(item)
+                prevItem = item
+                winner = (checkPattern(x)) ? 'x': null;
+            } else if (item==='O' &&  ( o.length===0 || prevItem===item)) {
+                o.push(item)
+                prevItem = item
+                winner = (checkPattern(o)) ? 'o': null;
+            }
+            else {
+                // reset the count if pattern is broken
+                // x = []
+                // o = []
+            }
+        }
+
+        return (winner)? winner : null
     }
 
     const checkPattern = (arr) => {
@@ -124,8 +156,6 @@ const gameboardController = (() => {
             }
             else {
                 // reset the count if pattern is broken
-                x = []
-                o = []
             }
         }
 
