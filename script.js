@@ -60,7 +60,6 @@ const gameboardController = (() => {
     let newGame;
 
 
-    
 
 
     const pickPlayerStart = () => {
@@ -79,12 +78,28 @@ const gameboardController = (() => {
     }
 
     const findWinner = () => {
-        return checkHorizontalWin()
+        return checkDiagonalWin()
     }
 
+
     const checkDiagonalWin = () => {
+        let winner;
+        items = newGame.getContent()
+    
+
+        diagonal1 = [items[0], items[4], items[8]] 
+        diagonal2 = [items[2], items[4], items[6]]
       // if specific blocks are prefilled with same characters
         
+        if (checkPattern(diagonal1)) {
+            winner = diagonal1[0]
+        } else if (checkPattern(diagonal2)) {
+            winner = diagonal2[0]
+        } else {
+
+        }
+
+        return (winner)? winner : null
     }
 
     const checkHorizontalWin = () => {
@@ -124,8 +139,10 @@ const gameboardController = (() => {
         return (winner)? winner : null
     }
 
+    const allEqual = arr => arr.every( v => v === arr[0] )
+
     const checkPattern = (arr) => {
-        if(arr.length===3 && arr.map(x => x===arr[0])) return true
+        if(arr.length===3 && allEqual(arr)) return true
         else false
     }
 
